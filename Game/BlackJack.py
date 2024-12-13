@@ -1,8 +1,5 @@
 import random
 
-
-
-
 class BlackJack:
     heart = "\u2665"
     spade = "\u2660"
@@ -41,6 +38,8 @@ class BlackJack:
 
     @staticmethod
     def format_cards(cards):
+        """Format a list of cards into a readable string."""
+        
         result = ""
         for card in cards:
             suit = BlackJack.suits[card["suit"]]
@@ -49,13 +48,16 @@ class BlackJack:
         return result.strip()
     
     def generate_deck(self):
+        """Generate a full deck of cards with all suits and numbers."""
+        
         numbers = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
         suits = ['hearts', 'diamonds', 'clubs', 'spades']
         deck = [{'number': number, 'suit': suit} for number in numbers for suit in suits]
         return deck
     
-    # Compute the value of hand
     def total_value(self, hand: list):
+        """Compute the total value of a hand, taking aces into account."""
+        
         value = 0
         aces = 0
         for card in hand:
@@ -73,6 +75,8 @@ class BlackJack:
         return value
     
     def draw_card(self):
+        """Draw a card from the deck and update the card count."""
+        
         card = self.deck.pop()
         if card["number"] in ['J', 'Q', 'K']: 
             self.card_count["10"] += 1
@@ -81,6 +85,8 @@ class BlackJack:
         return card
 
     def player_action(self, action):
+        """Process the player's action, either hit or stay."""
+        
         if action == "hit":
             self.player_hand.append(self.draw_card())
             self.update_status()
@@ -88,6 +94,7 @@ class BlackJack:
             self.update_status("stay")
     
     def dealer_action(self, strategy: str = "basic"):
+        """Make the dealer perform actions based on the specified strategy."""
         
         if strategy == "basic":
             while self.total_value(self.dealer_hand) < 17:
@@ -101,6 +108,8 @@ class BlackJack:
 
     
     def update_status(self, status = "continue"):
+        """Update the game status based on the player's hand value."""
+        
         player_value = self.get_playervalue()
         if player_value > 21:
             self.status = "player_bust"
@@ -110,20 +119,23 @@ class BlackJack:
             self.status = status
     
 
+    def get_dealervalue(self):
+        """Get the total value of the dealer's hand."""
+        return self.total_value(self.dealer_hand)
+
+    def get_playervalue(self):
+        """Get the total value of the player's hand."""
+        return self.total_value(self.player_hand)
+    
+    
     """
     一共两种gamemode，分别是对于player bust后的不同判断方式
     traditional：Player bust后直接判lose
     novel：Player bust后看Dealer，若dealer也bust则算draw
     """
-
-    def get_dealervalue(self):
-        return self.total_value(self.dealer_hand)
-
-    def get_playervalue(self):
-        return self.total_value(self.player_hand)
-    
     def game_result(self):
-
+        """Determine the result of the game based on player and dealer hand values."""
+        
         dealer_value = self.get_dealervalue()
         player_value = self.get_playervalue()
 
@@ -141,11 +153,15 @@ class BlackJack:
             return "loss"
         
     def start(self):
+        """Start a new round by dealing two cards each to the player and dealer."""
+        
         self.player_hand = [self.draw_card(), self.draw_card()]
         self.dealer_hand = [self.draw_card(), self.draw_card()]
         self.update_status()
     
     def reset(self):
+        """Reset the game state and shuffle a new deck."""
+        
         self.deck = self.generate_deck()
         random.shuffle(self.deck)
         self.player_hand = []
@@ -165,15 +181,15 @@ class BlackJack:
         
         
         
-        
     
     def play(self, player_action: str, dealer_strategy: str, output = False):
+        """Simulate a turn of the game with the specified player action and dealer strategy."""
+        
         self.dealer_action(dealer_strategy)
         self.player_action(player_action)
         if output:
             print("Dealer has:", game.format_cards(game.dealer_hand), game.total_value(game.dealer_hand))
         return self.status
-        
         
         
         
@@ -192,37 +208,3 @@ if __name__ == "__main__":
         print(f"card count: {game.card_count}")
         print("================================")
         game.reset()
-    
-    
-    
-
-        
-   
-    
-    
-
-        
-        
-        
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
