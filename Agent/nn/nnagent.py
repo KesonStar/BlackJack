@@ -63,7 +63,7 @@ class nnAgent:
         cc_array = pd.DataFrame.from_dict([card_count])
 
         input_array = np.concatenate([input_array, cc_array], axis=1)
-        input_array = np.delete(input_array, -1, axis=1)
+        input_array = np.delete(input_array, -1, axis=1) # remove the A column
         input_array = torch.tensor(input_array, dtype=torch.float32)
         return input_array
     

@@ -86,7 +86,7 @@ class BlackJack:
 
     def player_action(self, action):
         """Process the player's action, either hit or stay."""
-        
+        assert action in ["hit", "stay"]
         if action == "hit":
             self.player_hand.append(self.draw_card())
             return self.update_status()
@@ -97,7 +97,7 @@ class BlackJack:
         """Make the dealer perform actions based on the specified strategy."""
         
         if strategy == "basic":
-            while self.total_value(self.dealer_hand) <= 17:
+            while self.total_value(self.dealer_hand) < 17:
                 self.dealer_hand.append(self.draw_card())
         elif strategy == "greedy":
             while self.total_value(self.dealer_hand) < 21:

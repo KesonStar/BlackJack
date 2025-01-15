@@ -14,7 +14,7 @@ class qLearningAgent:
 
         # Initialize Q-table
         if is_train:
-            self.Q = np.zeros((33, 12, 2, 2)) # Player sum, dealer card, action
+            self.Q = np.zeros((33, 12, 2, 2)) # Player sum, dealer card, has_usable_ace, action
         else:
             self.load_q_table("Agent/qlearning/Q_traditional.npy")
             
