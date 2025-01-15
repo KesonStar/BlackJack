@@ -89,15 +89,15 @@ class BlackJack:
         
         if action == "hit":
             self.player_hand.append(self.draw_card())
-            self.update_status()
+            return self.update_status()
         elif action == "stay":
-            self.update_status("stay")
+            return self.update_status()
     
     def dealer_action(self, strategy: str = "basic"):
         """Make the dealer perform actions based on the specified strategy."""
         
         if strategy == "basic":
-            while self.total_value(self.dealer_hand) < 17:
+            while self.total_value(self.dealer_hand) <= 17:
                 self.dealer_hand.append(self.draw_card())
         elif strategy == "greedy":
             while self.total_value(self.dealer_hand) < 21:
@@ -117,6 +117,11 @@ class BlackJack:
             self.status = "player_blackjack"
         else:
             self.status = status
+        return self.status
+    
+    def get_status(self):
+        return self.status
+    
     
 
     def get_dealervalue(self):
@@ -135,29 +140,36 @@ class BlackJack:
     """
     def game_result(self):
         """Determine the result of the game based on player and dealer hand values."""
-        
+
         dealer_value = self.get_dealervalue()
         player_value = self.get_playervalue()
-
-        if player_value > 21:
-            if self.mode == "traditional" or self.mode == "novel" and dealer_value <= 21:
+        
+        if self.mode == "traditional":
+            if player_value > 21:
                 return "lose"
-            elif self.mode == "novel" and dealer_value > 21:
+            elif dealer_value > 21 or player_value > dealer_value:
+                return "win"
+            elif player_value == dealer_value:
                 return "draw"
-            
-        elif dealer_value > 21 or player_value > dealer_value:
-            return "win"
-        elif player_value == dealer_value:
-            return "draw"
-        else:
-            return "loss"
+            else:
+                return "lose"
+        elif self.mode == "novel":
+            if player_value > 21 and dealer_value <= 21:
+                return "lose"
+            elif dealer_value > 21 or player_value > dealer_value:
+                return "win"
+            elif player_value == dealer_value or (player_value > 21 and dealer_value > 21):
+                return "draw"
+            else:
+                return "lose"
+
         
     def start(self):
         """Start a new round by dealing two cards each to the player and dealer."""
         
         self.player_hand = [self.draw_card(), self.draw_card()]
         self.dealer_hand = [self.draw_card(), self.draw_card()]
-        self.update_status()
+        self.update_status() # init the status as continue
     
     def reset(self):
         """Reset the game state and shuffle a new deck."""
@@ -195,7 +207,6 @@ class BlackJack:
         
 if __name__ == "__main__":
     game = BlackJack()
-  
     for round in range(5):
         game.start()
         print("Dealer shows:", game.format_cards(game.dealer_hand[:1]))
@@ -203,6 +214,8 @@ if __name__ == "__main__":
             print(game.format_cards(game.player_hand), game.total_value(game.player_hand))
             action = input("Enter an action (hit/stay): ")
             game.play(action, "basic")
+            if action == "stay":
+                break
         print(f"dealer's hand: {game.format_cards(game.dealer_hand)} {game.get_dealervalue()}  player's hand: {game.format_cards(game.player_hand)} {game.get_playervalue()}")
         print(game.game_result())
         print(f"card count: {game.card_count}")

@@ -68,8 +68,8 @@ class nnAgent:
         return input_array
     
     
-    def choose_action(self):
-        input_array = self.encode_input(BlackJack())
+    def choose_action(self, game: BlackJack):
+        input_array = self.encode_input(game)
         output = self.model(input_array)
         predict = F.softmax(output, dim=1)
         predict = torch.argmax(predict, axis=1)
